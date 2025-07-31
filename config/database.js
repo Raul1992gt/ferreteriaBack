@@ -1,6 +1,6 @@
-require('dotenv').config();
+// config/database.js
 
-const config = {
+module.exports = {
   development: {
     url: process.env.DATABASE_URL,
     dialect: 'postgres',
@@ -10,33 +10,29 @@ const config = {
       min: 0,
       acquire: 30000,
       idle: 10000
-    }
+    },
   },
-  test: {
-    url: process.env.DATABASE_URL_TEST,
+  production: {
+    username: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE_NAME,
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
     dialect: 'postgres',
-    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: true,
+        ca: process.env.DATABASE_SSL_CA,
+      },
+    },
+    // Opcional: Configuración del pool de conexiones para producción
     pool: {
-      max: 5,
+      max: 10,
       min: 0,
       acquire: 30000,
       idle: 10000
-    }
-  },
-  production: {
-    url: process.env.DATABASE_URL,
-    dialect: 'postgres',
-    logging: false,
-    pool: {
-      max: 20,
-      min: 5,
-      acquire: 30000,
-      idle: 10000
     },
-    dialectOptions: {
-      ssl: true
-    }
-  }
+    logging: false, // Desactivar logs de SQL en producción
+  },
 };
-
-module.exports = config; 

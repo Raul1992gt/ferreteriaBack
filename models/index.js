@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const Sequelize = require('sequelize');
 const config = require('../config/database.js');
 
@@ -7,6 +5,9 @@ const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];
 
 let sequelize;
+
+// Si tu dbConfig de producción tiene una URL completa (aunque Aiven te dio componentes separados)
+// Puedes construir la URL si quieres, pero con los componentes separados y dialectOptions es suficiente
 if (dbConfig.url) {
   sequelize = new Sequelize(dbConfig.url, dbConfig);
 } else {
@@ -33,7 +34,18 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+// Prueba la conexión a la base de datos
+sequelize.authenticate()
+  .then(() => {
+    console.log('Conexión a la base de datos establecida correctamente.');
+  })
+  .catch(err => {
+    console.error('❌ Error al conectar a la base de datos:', err);
+    // Es común salir del proceso si la conexión a la DB falla en el arranque
+    process.exit(1);
+  });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db; 
+module.exports = db;
