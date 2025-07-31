@@ -34,7 +34,10 @@ const config = {
       idle: 10000
     },
     dialectOptions: {
-      ssl: false
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     }
   }
 };
